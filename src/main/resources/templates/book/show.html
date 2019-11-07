@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+		<meta name="description" content="" />
+		<meta name="author" content="" />
+		<title>Show Student</title>
+	</head>
+	<body>
+		<div layout:fragment="content">
+			<h1>Show Book</h1>
+			<hr />
+			<div class="form-group"> 
+				<label for="name">Title: </label>  
+				<span th:text="${book.title}"></span> 
+			</div> 
+			<div class="form-group"> 
+				<label for="email">Author: </label>  
+				<span th:text="${book.author}"></span> 
+			</div> 
+<!-- 			<div class="form-group">  -->
+<!-- 				<label for="registration">Registration: </label>   -->
+<!-- 				<span th:text="${student.registration}"></span>  -->
+<!-- 			</div>  -->
+			<a th:href="@{/books}" class="btn btn-primary" >Back to list Book</a> 
+			<a th:href="@{/books/{id}/edit(id = ${book.id})}" class="btn btn-info">Edit this record</a>
+			<a th:href="${book.id +'/delete'}" class="btn btn-danger">Delete this record</a>
+			
+		</div>
+	</body>
+</html>
