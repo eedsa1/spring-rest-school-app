@@ -1,9 +1,7 @@
 package com.example.controller;
 
 import java.util.List;
-
 import javax.validation.Valid;
-
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -50,9 +48,7 @@ public class ModuleController {
 	}
 
 	@GetMapping(value = "/new")
-	public String create(Model model, @ModelAttribute Module entityModule, @ModelAttribute Student entityStudent) {
-		// model.addAttribute("module", entityModule);
-		
+	public String create(Model model, @ModelAttribute Module entityModule, @ModelAttribute Student entityStudent) {	
 		return "module/form";
 	}
 	

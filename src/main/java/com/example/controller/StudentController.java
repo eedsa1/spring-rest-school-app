@@ -1,9 +1,7 @@
 package com.example.controller;
 
 import java.util.List;
-
 import javax.validation.Valid;
-
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import com.example.model.Module;
 import com.example.model.Student;
 import com.example.service.ModuleService;
@@ -30,9 +27,8 @@ public class StudentController {
 	private StudentService studentService;
 	
 	@Autowired
-	private ModuleService moduleService; //module service
+	private ModuleService moduleService;
 
-	// Primeira tela da pagina de Students
 	@GetMapping
 	public String index(Model model) {
 		List<Student> all = studentService.findAll();
@@ -41,7 +37,6 @@ public class StudentController {
 		return "student/index";
 	}
 	
-	// Tela de Show Student
 	@GetMapping("/{id}")
 	public String show(Model model, @PathVariable("id") Integer id) {
 		if (id != null) {
@@ -51,18 +46,15 @@ public class StudentController {
 		return "student/show";
 	}
 
-	// Tela com Formulario de New Student
 	@GetMapping(value = "/new")
 	public String create(Model model, @ModelAttribute Student entityStudent, 
 			             @ModelAttribute Module entityModule) {
-		// model.addAttribute("student", entityStudent);
 		List<Module> all = moduleService.findAll();
 		model.addAttribute("modules", all);
 		
 		return "student/form";
 	}
 	
-	// Processamento do formulario New Student (ou Alter Student) 
 	@PostMapping
 	public String create(@Valid @ModelAttribute Student entityStudent, 
 			             @Valid @ModelAttribute Module entityModule,

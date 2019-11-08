@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,58 +17,59 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.exception.ResourceNotFoundException;
-import com.example.model.Book;
-import com.example.service.BookService;
+import com.example.model.Module;
 import com.example.service.ModuleService;
 
 @RestController
-@RequestMapping("/books")
-public class BookRestController {
-	
-	@Autowired
-	private BookService bookService;
+@RequestMapping("/modules")
+public class ModuleRestController {
 	
 	@Autowired
 	private ModuleService moduleService;
 	
-	@GetMapping(value="/books/{id}")
+	@GetMapping(value="/modules/{id}")
 	public ResponseEntity<?> show(Model model, @PathVariable("id") Integer id) {
 		
-		Book book = null;
+		Module module = null;
 		try{
-			book = bookService.findOne(id).get();
+			module = moduleService.findOne(id).get();
 		}catch(ResourceNotFoundException e) {
 			e.printStackTrace();
 		}
-		return new ResponseEntity(book, HttpStatus.OK); 
+		return new ResponseEntity(module, HttpStatus.OK); 
 	}
 	
-	@GetMapping(value="/books-all")
+	@GetMapping(value="/modules-all")
 	public ResponseEntity<?> getBooks(Pageable pageable) {
-		Page<Book> page = bookService.findAll(pageable);
+		Page<Module> page = moduleService.findAll(pageable);
 		
 		if(page.getTotalElements()==0) {
-			throw new ResourceNotFoundException("Não há livros cadastrados!");
+			throw new ResourceNotFoundException("Não há módulos cadastrados!");
 		}
 		return new ResponseEntity(page, HttpStatus.OK); 
 	}
 	
-	@DeleteMapping(value="/books/{id}")
+	@DeleteMapping(value="/modules/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes){
-		bookService.deleteById(id);
+		moduleService.deleteById(id);
 		return new ResponseEntity(HttpStatus.OK); 
 	}
 	
-	@PostMapping(value="/books/{id}")
-	public ResponseEntity<?> create(@Valid @RequestBody Book entityBook){
+	@PostMapping(value="/modules/{id}")
+	public ResponseEntity<?> create(@Valid @RequestBody Module entityModule){
 		
-		Book book = null;
+		Module module = null;
 		try{
-			book = bookService.save(entityBook);
+			module = moduleService.save(entityModule);
 		}catch(Throwable e) {
 			return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new ResponseEntity(book, HttpStatus.OK);
+		return new ResponseEntity(module, HttpStatus.OK);
 	}
-
+	
+	private static final String MSG_SUCESS_INSERT = "Module inserted successfully.";
+	private static final String MSG_SUCESS_UPDATE = "Module successfully changed.";
+	private static final String MSG_SUCESS_DELETE = "Deleted Module successfully.";
+	private static final String MSG_ERROR = "Error.";
+	
 }

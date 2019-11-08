@@ -32,7 +32,7 @@ public class BookController {
 	private BookService bookService;
 	
 	@Autowired
-	private ModuleService moduleService; //module service
+	private ModuleService moduleService;
 	
 	@GetMapping
 	public String index(Model model) {
@@ -42,7 +42,6 @@ public class BookController {
 		return "book/index";
 	}
 	
-	// Tela de Show Student
 	@GetMapping("/{id}")
 	public String show(Model model, @PathVariable("id") Integer id) {
 		if (id != null) {
@@ -52,18 +51,15 @@ public class BookController {
 		return "book/show";
 	}
 
-	// Tela com Formulario de New Student
 	@GetMapping(value = "/new")
 	public String create(Model model, @ModelAttribute Book entityBook, 
 			             @ModelAttribute Module entityModule) {
-		// model.addAttribute("student", entityStudent);
 		List<Module> all = moduleService.findAll();
 		model.addAttribute("modules", all);
 		
 		return "book/form";
 	}
-	
-	// Processamento do formulario New Student (ou Alter Student) 
+	 
 	@PostMapping
 	public String create(@Valid @ModelAttribute Book entityStudent, 
 			             @Valid @ModelAttribute Module entityModule,

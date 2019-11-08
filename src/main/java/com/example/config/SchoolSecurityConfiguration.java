@@ -18,19 +18,21 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled=true)
-// @EnableWebSecurity
 public class SchoolSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
     DataSource dataSource;
 
-	//Enable jdbc authentication
     @Autowired
     public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-        //auth.jdbcAuthentication().dataSource(dataSource);
     	auth.inMemoryAuthentication().withUser("eric")
     								 .password("{noop}123456")
 								 	 .roles("USER");
+    	
+    	auth.inMemoryAuthentication().withUser("admin")
+							 		 .password("{noop}root")
+						 			 .roles("ADMIN");
+    	
     }
 
 	
@@ -41,20 +43,13 @@ public class SchoolSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-//		http.authorizeRequests().antMatchers("/").permitAll().antMatchers("/home").hasAnyRole("USER", "ADMIN")
-//				.antMatchers("/students").hasAnyRole("USER", "ADMIN").antMatchers("/modules")
-//				.hasAnyRole("ADMIN").anyRequest().authenticated().and().formLogin().loginPage("/login").permitAll()
-//				.and().logout().permitAll();
-//
-//		http.csrf().disable();
-		
-		http.authorizeRequests()
-			.antMatchers("/").permitAll()
-		    .anyRequest().authenticated()
-		    .and()
-		    .formLogin().permitAll()
-		    .defaultSuccessUrl("/", true)
-		    .and().logout().permitAll();
+		http.authorizeRequests().antMatchers("/")
+								.permitAll().antMatchers("/").hasAnyRole("USER", "ADMIN")
+								.antMatchers("/students").hasAnyRole("USER", "ADMIN")
+								.antMatchers("/books").hasAnyRole("ADMIN")
+								.antMatchers("/modules").hasAnyRole("ADMIN")
+								.anyRequest().authenticated().and().formLogin().permitAll()
+								.and().logout().permitAll();
 
 		http.csrf().disable();
 	}

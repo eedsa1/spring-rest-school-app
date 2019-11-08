@@ -1,7 +1,6 @@
 package com.example.model;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,9 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+//Classe utilizada para representar os livros dos módulos
 @Entity
 @Table(name = "books")
 public class Book implements Serializable{
@@ -58,5 +57,4 @@ public class Book implements Serializable{
 	public void setModule(Module module) {
 		this.module = module;
 	}
-
 }

@@ -1,7 +1,11 @@
 package com.example.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import com.example.model.Book;
 import com.example.model.Module;
 import com.example.repository.ModuleRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +22,10 @@ public class ModuleService {
 	public List<Module> findAll() {
 		return moduleRepository.findAll();
 	}
+	
+	public Page<Module> findAll(Pageable pageable) {
+		return moduleRepository.findAll(pageable);
+	}
 
 	public Optional<Module> findOne(Integer id) {
 		return moduleRepository.findById(id);
@@ -31,6 +39,11 @@ public class ModuleService {
 	@Transactional(readOnly = false)
 	public void delete(Module entity) {
 		moduleRepository.delete(entity);
+	}
+	
+	@Transactional(readOnly = false)
+	public void deleteById(Integer id) {
+		moduleRepository.deleteById(id);;
 	}
 
 }

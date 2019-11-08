@@ -1,26 +1,22 @@
 package com.example.controller;
 
-import java.util.List;
 import java.util.NoSuchElementException;
-
 import javax.validation.Valid;
-
-import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import com.example.model.Module;
+import com.example.exception.ResourceNotFoundException;
 import com.example.model.Student;
 import com.example.service.ModuleService;
 import com.example.service.StudentService;
@@ -32,10 +28,9 @@ public class StudentRestController {
 	@Autowired
 	private StudentService studentService;
 	
-//	@Autowired
-//	private ModuleService moduleService; //module service
+	@Autowired
+	private ModuleService moduleService;
 
-	// Primeira tela da pagina de Students
 	@GetMapping(value="/students/{id}")
 	public ResponseEntity<?> show(Model model, @PathVariable("id") Integer id) {
 		
@@ -48,86 +43,33 @@ public class StudentRestController {
 		return new ResponseEntity(student, HttpStatus.OK); 
 	}
 	
-
-	// Tela com Formulario de New Student
-//	@GetMapping(value = "/new")
-//	public String create(Model model, @ModelAttribute Student entityStudent, 
-//			             @ModelAttribute Module entityModule) {
-//		// model.addAttribute("student", entityStudent);
-//		List<Module> all = moduleService.findAll();
-//		model.addAttribute("modules", all);
-//		
-//		return "student/form";
-//	}
-//	
-//	// Processamento do formulario New Student (ou Alter Student) 
-//	@PostMapping
-//	public String create(@Valid @ModelAttribute Student entityStudent, 
-//			             @Valid @ModelAttribute Module entityModule,
-//			             BindingResult result, RedirectAttributes redirectAttributes) {
-//		Student student = null;
-//		String pagina_retorno = "redirect:/students/" ;
-//	
-//		try {
-//			student = studentService.save(entityStudent);
-//			redirectAttributes.addFlashAttribute("success", MSG_SUCESS_INSERT);
-//			pagina_retorno = pagina_retorno + student.getId();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			redirectAttributes.addFlashAttribute("error", MSG_ERROR);
-//		}catch (Throwable e) {
-//			e.printStackTrace();
-//			redirectAttributes.addFlashAttribute("error", MSG_ERROR);
-//		}
-//		
-//		return pagina_retorno;
-//	}
-//	
-//	@GetMapping("/{id}/edit")
-//	public String update(Model model, @PathVariable("id") Integer id) {
-//		
-//		try {
-//			if (id != null) {
-//				List<Module> all = moduleService.findAll();
-//				model.addAttribute("modules", all);
-//				
-//				Student entity = studentService.findOne(id).get();
-//				model.addAttribute("student", entity);
-//			}
-//		} catch (Exception e) {
-//			throw new ServiceException(e.getMessage());
-//		}
-//		return "student/form";
-//	}
-//	
-//	@PutMapping
-//	public String update(@Valid @ModelAttribute Student entity, BindingResult result, 
-//			             RedirectAttributes redirectAttributes) {
-//		Student student = null;
-//		try {
-//			student = studentService.save(entity);
-//			redirectAttributes.addFlashAttribute("success", MSG_SUCESS_UPDATE);
-//		} catch (Exception e) {
-//			redirectAttributes.addFlashAttribute("error", MSG_ERROR);
-//			e.printStackTrace();
-//		}
-//		return "redirect:/students/" + student.getId();
-//	}
-//	
-//	@RequestMapping("/{id}/delete")
-//	public String delete(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-//		try {
-//			if (id != null) {
-//				Student entity = studentService.findOne(id).get();
-//				studentService.delete(entity);
-//				redirectAttributes.addFlashAttribute("success", MSG_SUCESS_DELETE);
-//			}
-//		} catch (Exception e) {
-//			redirectAttributes.addFlashAttribute("error", MSG_ERROR);
-//			throw new ServiceException(e.getMessage());
-//		}
-//		return "redirect:/students/";
-//	}
+	@GetMapping(value="/students-all")
+	public ResponseEntity<?> getStudents(Pageable pageable) {
+		Page<Student> page = studentService.findAll(pageable);
+		
+		if(page.getTotalElements()==0) {
+			throw new ResourceNotFoundException("Não há alunos cadastrados!");
+		}
+		return new ResponseEntity(page, HttpStatus.OK); 
+	}
+	
+	@DeleteMapping(value="/students/{id}")
+	public ResponseEntity<?> delete(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes){
+		studentService.deleteById(id);
+		return new ResponseEntity(HttpStatus.OK); 
+	}
+	
+	@PostMapping(value="/students/{id}")
+	public ResponseEntity<?> create(@Valid @RequestBody Student entityStudent){
+		
+		Student student = null;
+		try{
+			student = studentService.save(entityStudent);
+		}catch(Throwable e) {
+			return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity(student, HttpStatus.OK);
+	}
 	
 	private static final String MSG_SUCESS_INSERT = "Student inserted successfully.";
 	private static final String MSG_SUCESS_UPDATE = "Student successfully changed.";
